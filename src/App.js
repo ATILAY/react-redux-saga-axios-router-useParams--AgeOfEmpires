@@ -1,26 +1,65 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Home from "./components/Home"
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+import Units from "./components/Units";
+import { connect }  from 'react-redux';
+import UnitDetail from "./components/UnitDetail";
 
-function App() {
+function App(props) {
+  const [tableContent, setTableContent] = useState(props.tableContent)
+  
+  useEffect(() => {
+    props.watchAll() 
+  }, [tableContent]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+
+      <Router>
+            <div className="App">
+      <Switch>
+                <Route exact path="/units">
+                  <Units />
+                </Route>
+                <Route path="/UnitDetail/:id" component={UnitDetail} />
+
+                
+                <Route exact path="/">
+                  <Home />
+                </Route>
+      </Switch>
+              </div>
+      </Router>
   );
 }
 
-export default App;
+//export default App;
+const mapStateToProps = (state)=>{
+  return {
+
+    tableContent: state.tableContent,
+
+  }
+}
+const mapDispatchToProps = (dispatch)=>{
+  return {
+      watchAll:  ()=>dispatch({
+      type:"ALL",
+      
+      
+    }),
+    watchAfterStart: ()=>dispatch({
+      type:"AFTERSTART",
+      
+    }),
+
+  }
+}//mapDispatchToProps
+
+export default connect(mapStateToProps,mapDispatchToProps)(App);
+
